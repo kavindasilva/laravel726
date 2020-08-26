@@ -8,18 +8,20 @@ use App\Item;
 class ItemController extends Controller
 {
     public function getAll(){
-        $items = Item::get()->toJson(JSON_PRETTY_PRINT);
+        $items = Item::get();
+        // return \Response::json($items, 200); // this also works
         return response($items, 200);
     }
 
     public function getById($id){
         if (Item::where('id', $id)->exists()) {
-            $item = Item::where('id', $id)->get()->toJson(JSON_PRETTY_PRINT);
+            $item = Item::where('id', $id)->get();
             return response($item, 200);
         }
         else {
-            return response()->json([
-              "message" => "Student not found"
+            return response([
+              "message" => "Student not found",
+              "id" => $id
             ], 404);
         }
     }
@@ -32,8 +34,8 @@ class ItemController extends Controller
         $item->price = $request->price;
         $item->save();
 
-        return response()->json([
-            "id" => $item->id
+        return response([
+            $item
         ], 201);
     }
 }
