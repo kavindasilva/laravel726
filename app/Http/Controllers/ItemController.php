@@ -56,9 +56,24 @@ class ItemController extends Controller
             if(true!==$res){
                 return $res;
             }
-                
+
             return response([
                 "message" => "records updated successfully",
+                "data" => $item
+            ], 200);
+        }
+        return response([
+                "message" => "Item not found",
+                "id" => $id
+            ], 404);
+    }
+
+    public function deleteItem(Request $request, $id) {
+        if (Item::where('id', $id)->exists()) {
+            $item = Item::find($id);
+            $item->delete();
+            return response([
+                "deleted" => true,
                 "data" => $item
             ], 200);
         }
