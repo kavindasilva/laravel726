@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+/**
+ * created using
+ * php artisan make:controller ItemController
+ */
 
 use Illuminate\Http\Request;
 use App\Item;
@@ -18,24 +22,48 @@ class ItemController extends Controller
             $item = Item::where('id', $id)->get();
             return response($item, 200);
         }
-        else {
-            return response([
-              "message" => "Student not found",
-              "id" => $id
+        return response([
+                "message" => "Item not found",
+                "id" => $id
             ], 404);
-        }
     }
 
     public function addNew(Request $request){
-        // var_dump($request);exit;
         $item = new Item;
         $item->name = $request->name;
         $item->batch = $request->batch;
         $item->price = $request->price;
-        $item->save();
+        // (!$item->save()){}
+
+        $res = $this->saveExtended($item);
+        if(true!==$res){
+            return $res;
+        }
 
         return response([
             $item
         ], 201);
+    }
+
+    public function updateItem(Request $request, $id) {
+        if (Item::where('id', $id)->exists()) {
+            $item = Item::find($id);
+            $item->name = isset($request->name) ? $request->name : $item->name;
+            $item->batch = isset($request->batch) ? $request->batch : $item->batch;
+            $item->price = isset($request->price) ? $request->price : $item->price;
+
+            // $student->name = is_null($request->name) ? $student->name : $request->name;
+            // $student->course = is_null($request->course) ? $student->course : $request->course;
+            $item->save();
+    
+            return response([
+                "message" => "records updated successfully",
+                "data" => $item
+            ], 200);
+        }
+        return response([
+                "message" => "Item not found",
+                "id" => $id
+            ], 404);
     }
 }
