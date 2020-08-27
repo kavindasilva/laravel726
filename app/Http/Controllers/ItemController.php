@@ -52,10 +52,11 @@ class ItemController extends Controller
             $item->batch = isset($request->batch) ? $request->batch : $item->batch;
             $item->price = isset($request->price) ? $request->price : $item->price;
 
-            // $student->name = is_null($request->name) ? $student->name : $request->name;
-            // $student->course = is_null($request->course) ? $student->course : $request->course;
-            $item->save();
-    
+            $res = $this->saveExtended($item);
+            if(true!==$res){
+                return $res;
+            }
+                
             return response([
                 "message" => "records updated successfully",
                 "data" => $item

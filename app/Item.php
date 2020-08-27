@@ -1,6 +1,10 @@
 <?php
 
 namespace App;
+/**
+ * created using
+ * php artisan make:model Item -m
+ */
 
 use Illuminate\Database\Eloquent\Model;
 
