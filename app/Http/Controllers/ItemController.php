@@ -14,13 +14,15 @@ class ItemController extends Controller
     public function getAll(){
         $items = Item::get();
         // return \Response::json($items, 200); // this also works
-        return response($items, 200);
+        return response($items->extendedResult(), 200);
     }
 
     public function getById($id){
         if (Item::where('id', $id)->exists()) {
-            $item = Item::where('id', $id)->get();
-            return response($item, 200);
+            // $item = Item::where('id', $id);
+            $item = Item::find($id);
+            // return response($item, 200);
+            return response($item->extendedResult, 200);
         }
         return response([
                 "message" => "Item not found",
