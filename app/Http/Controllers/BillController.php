@@ -13,17 +13,16 @@ class BillController extends Controller
 {
     public function getAll(){
         $bills = Bill::get();
-        // return \Response::json($bills, 200); // this also works
-        return response($bills->extendedResult(), 200);
+        $res = [];
+        foreach($bills as $b){
+            $res[] = $b->extendedResult();
+        }
+        return response($res, 200);
     }
 
     public function getById($id){
         if (Bill::where('id', $id)->exists()) {
-            // $bill = Bill::where('id', $id);
             $bill = Bill::find($id);
-            // return response($bill->get(), 200);
-            // return response($bill, 200);
-            // return response($bill->items, 200);
             return response($bill->extendedResult(), 200);
         }
         return response([

@@ -22,11 +22,8 @@ class Bill extends Model
     }
 
     public function extendedResult(){
-        $this->items = $this->items;
-        // var_dump(__FUNCTION__);
-        // foreach ($this->items() as $item) {
-        //     $this->items[] = $item;
-        // }
+        // $this->items = $this->items;
+        $this->items;
         return $this;
     }
 }

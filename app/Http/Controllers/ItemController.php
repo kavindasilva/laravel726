@@ -19,10 +19,8 @@ class ItemController extends Controller
 
     public function getById($id){
         if (Item::where('id', $id)->exists()) {
-            // $item = Item::where('id', $id);
-            $item = Item::find($id);
-            // return response($item, 200);
-            return response($item->extendedResult, 200);
+            $item = Item::where('id', $id)->get();
+            return response($item, 200);
         }
         return response([
                 "message" => "Item not found",
