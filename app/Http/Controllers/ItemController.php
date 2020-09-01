@@ -13,8 +13,8 @@ class ItemController extends Controller
 {
     public function getAll(){
         $items = Item::get();
-        // return \Response::json($items, 200); // this also works
-        return response($items->extendedResult(), 200);
+        return \Response::json($items, 200); // this also works
+        // return response($items->extendedResult(), 200);
     }
 
     public function getById($id){
