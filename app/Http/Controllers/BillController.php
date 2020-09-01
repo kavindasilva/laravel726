@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Bill;
+use App\Item;
 
 class BillController extends Controller
 {
@@ -71,6 +72,13 @@ class BillController extends Controller
             $b_item->bill_id = $bill->id;
             $b_item->item_id = $itm["item_id"];
             $b_item->qty = $itm["qty"];
+
+            if( !Item::where('id', $b_item->item_id)->exists() ){
+                return response([
+                    "message" => "Item not found",
+                    "id" => $b_item->item_id
+                ], 409);
+            }
 
             $res = $this->saveExtended($b_item);
             if(true!==$res){
