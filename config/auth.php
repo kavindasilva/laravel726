@@ -42,8 +42,11 @@ return [
         ],
 
         'api' => [
-            'driver' => 'token',
+            // 'driver' => 'token',
+            'driver' => 'jwt',
             'provider' => 'users',
+            'input_key' => 'remember_token',   // The input name to pass through
+            'storage_key' => 'remember_token', // The column name to store in database
             'hash' => false,
         ],
     ],
