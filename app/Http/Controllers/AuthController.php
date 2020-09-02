@@ -92,32 +92,33 @@ class AuthController extends Controller
     public function me()
     {
         return response()->json( JWTAuth::user() );
-        // return response()->json($this->guard()->user());
     }
 
     /**
-     * @TODO: check function
      * Log the user out (Invalidate the token)
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout()
     {
-        // $this->guard()->logout();
-        return response()->json(['message' => 'Successfully logged out', "data" => JWTAuth::invalidate($token) ]);
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json([
+            'message' => 'Successfully logged out',
+            "data" => JWTAuth::invalidate()
+        ]);
     }
 
     /**
-     * @TODO: check function
      * Refresh a token.
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function refresh()
     {
-        return JWTAuth::refresh();
-        // return $this->respondWithToken($this->guard()->refresh());
+        return response()->json([
+            'access_token' => JWTAuth::refresh(),
+            'token_type' => 'bearer',
+            'expires_in' => JWTAuth::factory()->getTTL() * 60
+        ]);
     }
 
     /**
@@ -133,7 +134,6 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60
-            // 'expires_in' => $this->guard()->factory()->getTTL() * 60
         ]);
     }
 

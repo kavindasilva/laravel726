@@ -21,7 +21,8 @@ Route::get('open', 'ItemController@getAll');
 Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('user', 'AuthController@getAuthenticatedUser');
     Route::get('me', 'AuthController@me');
-    Route::get('closed', 'DataController@closed');
+    Route::get('refresh', 'AuthController@refresh');
+    Route::get('logout', 'AuthController@logout');
     Route::get('item/{id}', 'ItemController@getById');
 });
 
