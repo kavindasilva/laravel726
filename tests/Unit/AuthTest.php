@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
+use App\user;
 // use PHPUnit\Framework\TestCase;
 
 class AuthTest extends TestCase
@@ -45,8 +46,9 @@ class AuthTest extends TestCase
             ->assertJsonPath('token_type', 'bearer');
 
         $this->token = $response["access_token"];
-        var_dump($this->token);
+        // var_dump($this->token);
         // $this->assertAuthenticated('api');
+        return $this;
     }
 
 
@@ -57,12 +59,11 @@ class AuthTest extends TestCase
      */
     public function testLoggedUser()
     {
-        $payload = [
-            "email" => $this->email,
-            "password" => $this->password
-        ];
+        // $this->testLogin();
+        // var_dump($this->token);
+        $this->token = $this->getTokenForUser($this->adminUser());
         $response = $this->get('api/me', [
-            // $this->getAuthHeader()
+            // $this->getAuthHeader(),
             "Authorization" => "Bearer ".($this->token),
             "Accept" => "application/json"
         ]);
@@ -78,9 +79,25 @@ class AuthTest extends TestCase
     }
 
 
+    public function getTokenForUser(User $user) : string
+    {
+        return \JWTAuth::fromUser($user);
+    }
+
+    public function adminUser() : User
+    {
+        $user = \App\User::query()->firstWhere('email', $this->email);
+        if ($user) {
+            return $user;
+        }
+        // $user = \App\User::generate('Test Admin', 'test-admin@example.com', self::AUTH_PASSWORD);
+        // $user->assignRole(Role::findByName('admin'));
+        // return $user;
+    }
+
     protected function getAuthHeader(){
-        return (object)[
-            "Authorization" => "Bearer ".'$this->token'
+        return [
+            "Authorization" => "Bearer ".($this->token)
         ];
     }
 
