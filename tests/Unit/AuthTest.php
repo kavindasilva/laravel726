@@ -67,18 +67,30 @@ class AuthTest extends TestCase
             "Authorization" => "Bearer ".($this->token),
             "Accept" => "application/json"
         ]);
-        var_dump($response);
+        print_r($response);
+        // var_dump($response);
 
+        // $I = \UnitTester();
         $response->assertStatus(200)
-            ->assertHeader('Content-Type', 'application/json');
-            // ->assertJsonStructure(['access_token', 'token_type', 'expires_in'])
-            // ->assertJsonPath('token_type', 'bearer');
+            ->assertHeader('Content-Type', 'application/json')
+            ->assertJsonStructure(['id', 'name', 'email', 'created_at', 'created_at'])
+            ->assertJsonPath('email', $this->email);
+            // ->assertJsonPath('token_type', 'bearer'); assertInternalType
+            
+        // $this->assertTrue( $response->data, 'int' );
+            // "name": "k",
+            // "email": "k@admin.com",
+            // "created_at": "2020-09-01T14:33:44.000000Z",
+            // "updated_at": "2020-09-01T14:33:44.000000Z"
 
         // $this->token = $response["access_token"];
         // $this->assertAuthenticated('api');
     }
 
 
+    /**
+     * credit for getting user jwt in unit testing: https://github.com/tymondesigns/jwt-auth/issues/1246#issuecomment-633380379
+     */
     public function getTokenForUser(User $user) : string
     {
         return \JWTAuth::fromUser($user);
@@ -95,6 +107,9 @@ class AuthTest extends TestCase
         // return $user;
     }
 
+    /**
+     * @TODO: remove
+     */
     protected function getAuthHeader(){
         return [
             "Authorization" => "Bearer ".($this->token)
