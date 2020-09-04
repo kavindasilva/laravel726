@@ -26,12 +26,15 @@ class AuthTest extends BaseUnitTest
 
 
     /**
+     * @TODO: make this working
      * Test "Me", current user details.
      *
      * @return void
      */
     public function testMe()
     {
+        $this->assertTrue(false, "testMe() is just a function");
+        return;
         $payload = [
             "email" => $this->email,
             "password" => $this->password
