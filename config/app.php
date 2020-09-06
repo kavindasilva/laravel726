@@ -179,6 +179,11 @@ return [
          * reference: https://jwt-auth.readthedocs.io/en/docs/laravel-installation/
          */
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+
+        /**
+         * reference: https://spatie.be/docs/laravel-permission/v3/installation-laravel
+         */
+        Spatie\Permission\PermissionServiceProvider::class,
     ],
 
     /*
