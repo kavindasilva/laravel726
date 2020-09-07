@@ -11,6 +11,11 @@ use App\Item;
 
 class ItemController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['permission:readItem|createItem']);
+    }
+
     public function getAll(){
         $items = Item::get();
         return \Response::json($items, 200); // this also works

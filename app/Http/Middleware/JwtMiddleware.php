@@ -21,6 +21,9 @@ class JwtMiddleware extends BaseMiddleware
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
+            // foreach($users as $user){
+                // $user->assignRole('admin');
+            // }
         }
         catch (Exception $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){

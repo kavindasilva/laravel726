@@ -6,10 +6,14 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+// use App\Permissions\HasPermissionsTrait;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
+    // use HasPermissionsTrait;
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -38,6 +42,17 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
+    protected $guard_name = 'api';
+
+    /**
+     * The items that belong to the bill.
+     */
+    // public function items()
+    // {
+    //     // return $this->belongsToMany('App\Item');
+    //     return $this->belongsToMany(Item::class, 'bill_items', 'bill_id', 'item_id')->withPivot('qty');
+    // }
+
     public function getJWTIdentifier()
     {
         return $this->getKey(); // Eloquent Model method
@@ -45,6 +60,8 @@ class User extends Authenticatable implements JWTSubject
 
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'cussss' => 'kk'
+        ];
     }
 }

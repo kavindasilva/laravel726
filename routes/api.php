@@ -31,7 +31,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('item', 'ItemController@getAll');
-Route::get('item/{id}', 'ItemController@getById');
+// Route::get('item/{id}', 'ItemController@getById');
 Route::post('item', 'ItemController@addNew');
 Route::put('item/{id}', 'ItemController@updateItem');
 Route::patch('item/{id}', 'ItemController@updateItem');
