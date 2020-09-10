@@ -56,3 +56,12 @@ type Bill {
   #qty: String
 #}
 
+type Mutation {
+  createItem(
+    name: String!
+    batch: String!
+    price: String!
+  ): Item @create
+}
+
+
