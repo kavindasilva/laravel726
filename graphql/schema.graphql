@@ -5,7 +5,8 @@ scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
 type Query {
-    users: [User!]! @paginate(defaultCount: 10)
+    me: User @auth @middleware(checks: ["auth:api"])
+    users: [User!]! @paginate(defaultCount: 10) @guard
     user(id: ID @eq): User @find
     bills: [Bill!]! @paginate(defaultCount: 5)
     bill(id: ID! @eq): BillItem @find
@@ -49,5 +50,9 @@ type Bill {
   #bill_items: [BillItem!]! @hasMany
 }
 
-
+#type CustomRoleEdge implements Edge {
+  #cursor: String!
+  #node: Node
+  #qty: String
+#}
 
