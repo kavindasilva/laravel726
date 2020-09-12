@@ -56,12 +56,24 @@ type Bill {
   #qty: String
 #}
 
+input updItm{
+  name: String
+  batch: String
+  price: Float
+}
+
 type Mutation {
   createItem(
     name: String!
     batch: String!
-    price: String!
+    price: Float!
   ): Item @create
+
+  updateItem(
+    id: ID!
+    data: updItm @spread
+  ): Item @update
+
 }
 
 
