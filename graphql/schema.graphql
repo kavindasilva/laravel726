@@ -74,6 +74,10 @@ type Mutation {
     data: updItm @spread
   ): Item @update
 
+  deleteItem(
+    id: ID!
+  ): Item @delete
+
 }
 
 
