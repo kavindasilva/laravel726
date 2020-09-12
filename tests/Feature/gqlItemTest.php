@@ -16,6 +16,7 @@ class gqlitemTest extends TestCase
     protected $token = null;
     protected $email = "k@admin.com";
     protected $password = "k";
+    protected $existing_user_id = 8;
 
     /**
      * A basic test example.
@@ -26,7 +27,7 @@ class gqlitemTest extends TestCase
     {
         $response = $this->graphQL(/** @lang GraphQL */ '
             {
-                user(id:8) {
+                user(id:'.$this->existing_user_id.') {
                     id
                     name
                     email
@@ -34,7 +35,6 @@ class gqlitemTest extends TestCase
             }
         ');
         $response->assertStatus(200)
-            // ->assertJsonPath('data', 'invalid_credentials')
             ->assertHeader('Content-Type', 'application/json')
             ->assertJsonStructure([
                 'data' => [
@@ -45,9 +45,7 @@ class gqlitemTest extends TestCase
                     ]
                 ]
             ])
-        ;
-        // $response
-        // var_dump($response);
+            ->assertJsonFragment(['id' => "$this->existing_user_id"], $this->existing_user_id);
     }
 
     public function testNonExistingUserTest()
