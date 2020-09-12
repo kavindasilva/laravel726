@@ -17,6 +17,7 @@ class gqlitemTest extends TestCase
     protected $email = "k@admin.com";
     protected $password = "k";
     protected $existing_user_id = 8;
+    public $created_item_id = null;
 
     /**
      * A basic test example.
@@ -34,6 +35,8 @@ class gqlitemTest extends TestCase
                 }
             }
         ');
+        // var_dump($response->content());
+        // var_dump( $this->jsonStringToArr($response->content()) );
         $response->assertStatus(200)
             ->assertHeader('Content-Type', 'application/json')
             ->assertJsonStructure([
@@ -74,6 +77,99 @@ class gqlitemTest extends TestCase
     }
 
 
+    public function testItemCrudTest()
+    {
+        $new_id = $this->testCreateItemTest();
+        $this->testDeleteItemTest($new_id);
+    }
+    /**
+     {
+        "data": {
+            "createItem": {
+            "id": "21",
+            "name": "1",
+            "batch": "1",
+            "price": "11"
+            }
+        }
+    }
+     */
+    protected function testCreateItemTest()
+    {
+        $response = $this->graphQL(/** @lang GraphQL */ '
+            mutation{
+                createItem(
+                  name: "gql-unit-test",
+                  batch: "unit-gql",
+                  price: 122.5
+                ){
+                  id
+                  name
+                  batch
+                  price
+                }
+            }
+        ');
+        $response->assertStatus(200)
+            // ->assertJsonPath('data', 'invalid_credentials')
+            // ->assertJsonStructure([
+            //     'data' => [
+            //         'user' => [
+                        
+            //         ]
+            //     ]
+            // ])
+        ;
+        // $response
+        // var_dump($response);
+        $this->created_item_id = $this->jsonStringToArr($response->content())["data"]["createItem"]["id"];
+        return $this->jsonStringToArr($response->content())["data"]["createItem"]["id"];
+        var_dump($this->created_item_id);
+    }
+
+    /**
+    {
+        "data": {
+            "deleteItem": {
+            "id": "21",
+            "name": "1",
+            "batch": "1",
+            "price": "11"
+            }
+        }
+    }
+     */
+    protected function testDeleteItemTest($ii)
+    {
+        var_dump("xz");
+        var_dump($this->created_item_id);
+        $response = $this->graphQL(/** @lang GraphQL */ '
+            mutation{
+                deleteItem(
+                  id: '.$ii.'
+                ){
+                  id
+                  name
+                  batch
+                  price
+                }
+            }
+        ');
+        $response->assertStatus(200);
+        //     // ->assertJsonPath('data', 'invalid_credentials')
+        //     ->assertJsonStructure([
+        //         'data' => [
+        //             'user' => [
+                        
+        //             ]
+        //         ]
+        //     ])
+        // ;
+        // $response
+        // var_dump($response);
+    }
+
+
     /**
      * credit for getting user jwt in unit testing: https://github.com/tymondesigns/jwt-auth/issues/1246#issuecomment-633380379
      */
@@ -91,6 +187,10 @@ class gqlitemTest extends TestCase
         // $user = \App\User::generate('Test Admin', 'test-admin@example.com', self::AUTH_PASSWORD);
         // $user->assignRole(Role::findByName('admin'));
         // return $user;
+    }
+
+    protected function jsonStringToArr($string){
+        return json_decode($string, true);
     }
 
 }
