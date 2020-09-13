@@ -25,12 +25,12 @@ class gqlitemTest extends TestCase
      */
     public function testItemCrudTest()
     {
-        $new_id = $this->testCreateItemTest();
-        $this->testReadExistingItemTest($new_id );
-        $this->testEditItemTest($new_id );
-        $this->testReadExistingItemTest($new_id );
-        $this->testDeleteItemTest($new_id);
-        $this->testReadNonExistingItemTest($new_id );
+        $new_id = $this->checkCreateItemTest();
+        $this->checkReadExistingItemTest($new_id );
+        $this->checkEditItemTest($new_id );
+        $this->checkReadExistingItemTest($new_id );
+        $this->checkDeleteItemTest($new_id);
+        $this->checkReadNonExistingItemTest($new_id );
     }
 
     
@@ -46,7 +46,7 @@ class gqlitemTest extends TestCase
         }
     }
      */
-    protected function testCreateItemTest()
+    protected function checkCreateItemTest()
     {
         $response = $this->graphQL(/** @lang GraphQL */ '
             mutation{
@@ -93,7 +93,7 @@ class gqlitemTest extends TestCase
         }
     }
      */
-    protected function testReadExistingItemTest($id)
+    protected function checkReadExistingItemTest($id)
     {
         $response = $this->graphQL(/** @lang GraphQL */ '
             {
@@ -128,7 +128,7 @@ class gqlitemTest extends TestCase
         }
     }
      */
-    protected function testReadNonExistingItemTest()
+    protected function checkReadNonExistingItemTest()
     {
         $response = $this->graphQL(/** @lang GraphQL */ '
             {
@@ -163,7 +163,7 @@ class gqlitemTest extends TestCase
         }
     }
      */
-    protected function testEditItemTest($id)
+    protected function checkEditItemTest($id)
     {
         $response = $this->graphQL(/** @lang GraphQL */ '
             mutation{
@@ -213,7 +213,7 @@ class gqlitemTest extends TestCase
         }
     }
      */
-    protected function testDeleteItemTest($id)
+    protected function checkDeleteItemTest($id)
     {
         $response = $this->graphQL(/** @lang GraphQL */ '
             mutation{
