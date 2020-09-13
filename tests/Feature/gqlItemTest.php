@@ -19,6 +19,13 @@ class gqlitemTest extends TestCase
     protected $existing_user_id = 8;
     public $created_item_id = null;
 
+    protected $create_item_name = "gql-create-unit-test";
+    protected $create_item_batch = "unit-c-gql";
+    protected $create_item_price = 20.2;
+    protected $edit_item_name = "gql-edit-unit-test";
+    protected $edit_item_batch = "unit-e-gql";
+    protected $edit_item_price = 200;
+
     /**
      * A basic test example.
      *
@@ -87,57 +94,7 @@ class gqlitemTest extends TestCase
         $this->testReadNonExistingItemTest($new_id );
     }
 
-    protected function testReadExistingItemTest()
-    {
-        $response = $this->graphQL(/** @lang GraphQL */ '
-            {
-                user(id:'.$this->existing_user_id.') {
-                    id
-                    name
-                    email
-                }
-            }
-        ');
-        // var_dump($response->content());
-        // var_dump( $this->jsonStringToArr($response->content()) );
-        $response->assertStatus(200)
-            ->assertHeader('Content-Type', 'application/json')
-            ->assertJsonStructure([
-                'data' => [
-                    'user' => [
-                        'id',
-                        'email',
-                        'name',
-                    ]
-                ]
-            ])
-            ->assertJsonFragment(['id' => "$this->existing_user_id"], $this->existing_user_id);
-    }
-
-    protected function testReadNonExistingItemTest()
-    {
-        $response = $this->graphQL(/** @lang GraphQL */ '
-            {
-                user(id:857) {
-                    id
-                    name
-                    email
-                }
-            }
-        ');
-        $response->assertStatus(200)
-            // ->assertJsonPath('data', 'invalid_credentials')
-            ->assertJsonStructure([
-                'data' => [
-                    'user' => [
-                        
-                    ]
-                ]
-            ])
-        ;
-        // $response
-        // var_dump($response);
-    }
+    
     /**
      {
         "data": {
@@ -155,9 +112,9 @@ class gqlitemTest extends TestCase
         $response = $this->graphQL(/** @lang GraphQL */ '
             mutation{
                 createItem(
-                    name: "gql-unit-test",
-                    batch: "unit-gql",
-                    price: 122.5
+                    name: "'.$this->create_item_name.'",
+                    batch: "'.$this->create_item_batch.'",
+                    price: '.$this->create_item_price.'
                 ){
                     id
                     name
@@ -169,7 +126,7 @@ class gqlitemTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
-                    'deleteItem' => [
+                    'createItem' => [
                         'id',
                         'name',
                         'batch',
@@ -177,12 +134,142 @@ class gqlitemTest extends TestCase
                     ]
                 ]
             ])
+            ->assertJsonFragment(['name' => "$this->create_item_name"], $this->create_item_name)
+            ->assertJsonFragment(['batch' => "$this->create_item_batch"], $this->create_item_batch)
+            ->assertJsonFragment(['price' => "$this->create_item_price"], $this->create_item_price)
         ;
         // $response
         // var_dump($response);
         // $this->created_item_id = $this->jsonStringToArr($response->content())["data"]["createItem"]["id"];
         return $this->jsonStringToArr($response->content())["data"]["createItem"]["id"];
         // var_dump($this->created_item_id);
+    }
+
+    /**
+    {
+        "data": {
+            "item": {
+                "id": "31",
+                "name": "gql-unit-test",
+                "batch": "unit-gql",
+                "price": "122.5"
+            }
+        }
+    }
+     */
+    protected function testReadExistingItemTest()
+    {
+        $response = $this->graphQL(/** @lang GraphQL */ '
+            {
+                item(id: 31){
+                    id
+                    name
+                    batch
+                    price
+                }
+            }
+        ');
+        // var_dump($response->content());
+        // var_dump( $this->jsonStringToArr($response->content()) );
+        $response->assertStatus(200)
+            ->assertHeader('Content-Type', 'application/json')
+            ->assertJsonStructure([
+                'data' => [
+                    'item' => [
+                        'id',
+                        'name',
+                        'batch',
+                        'price',
+                    ]
+                ]
+            ])
+            ->assertJsonFragment(['id' => "$this->existing_user_id"], $this->existing_user_id);
+    }
+
+    /**
+    {
+        "data": {
+            "item": null
+        }
+    }
+     */
+    protected function testReadNonExistingItemTest()
+    {
+        $response = $this->graphQL(/** @lang GraphQL */ '
+            {
+                item(id: 33451){
+                    id
+                    name
+                    batch
+                    price
+                }
+            }
+        ');
+        $response->assertStatus(200)
+            // ->assertJsonPath('data', 'invalid_credentials')
+            ->assertJsonStructure([
+                'data' => [
+                    'item' => [
+                        null
+                    ]
+                ]
+            ])
+        ;
+        // $response
+        // var_dump($response);
+    }
+
+    /**
+    {
+        "data": {
+            "updateItem": {
+                "id": "36",
+                "name": "33",
+                "batch": "d",
+                "price": "33"
+            }
+        }
+    }
+     */
+    protected function testEditItemTest($id)
+    {
+        var_dump("xz");
+        var_dump($this->created_item_id);
+        $response = $this->graphQL(/** @lang GraphQL */ '
+            mutation{
+                updateItem(
+                    id:'.$id.'
+                    data:{
+                        name: "'.$this->edit_item_name.'",
+                        price: '.$this->edit_item_price.'
+                        batch: "'.$this->edit_item_batch.'"
+                    }
+                ){
+                    id
+                    name
+                    batch
+                    price
+                }
+            }
+        ');
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'data' => [
+                    'updateItem' => [
+                        'id',
+                        'name',
+                        'batch',
+                        'price',
+                    ]
+                ]
+            ])
+            ->assertJsonFragment(['id' => "$id"], $id)
+            ->assertJsonFragment(['name' => "$this->edit_item_name"], $this->edit_item_name)
+            ->assertJsonFragment(['batch' => "$this->edit_item_batch"], $this->edit_item_batch)
+            ->assertJsonFragment(['price' => "$this->edit_item_price"], $this->edit_item_price)
+        ;
+        // $response
+        var_dump($response);
     }
 
     /**
@@ -197,14 +284,14 @@ class gqlitemTest extends TestCase
         }
     }
      */
-    protected function testDeleteItemTest($ii)
+    protected function testDeleteItemTest($id)
     {
         var_dump("xz");
         var_dump($this->created_item_id);
         $response = $this->graphQL(/** @lang GraphQL */ '
             mutation{
                 deleteItem(
-                    id: '.$ii.'
+                    id: '.$id.'
                 ){
                     id
                     name
@@ -226,7 +313,7 @@ class gqlitemTest extends TestCase
             ])
         ;
         // $response
-        // var_dump($response);
+        var_dump($response);
     }
 
 
