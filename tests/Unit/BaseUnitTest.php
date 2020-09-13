@@ -29,7 +29,7 @@ class BaseUnitTest extends TestCase
      *
      * @return void
      */
-    public function testRefreshToken()
+    protected function testRefreshToken()
     {
         $this->old_token = $this->getTokenForUser($this->adminUser());
         $response = $this->get('api/refresh', [

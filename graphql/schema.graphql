@@ -1,0 +1,83 @@
+"A date string with format `Y-m-d`, e.g. `2011-05-23`."
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type Query {
+    me: User @auth @middleware(checks: ["auth:api"])
+    users: [User!]! @paginate(defaultCount: 10) @guard
+    user(id: ID @eq): User @find
+    bills: [Bill!]! @paginate(defaultCount: 5)
+    bill(id: ID! @eq): BillItem @find
+    items: [Item!]! @paginate(defaultCount: 10)
+    item(id: ID @eq): Item @find
+    #article(id: ID! @eq): Article @find
+    #articles: [Article!]! @paginate
+}
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    #password: String
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type Item {
+  id: ID!
+  name: String!
+  batch: String!
+  price: String!
+  #bills: [bill!]! @belongsToMany #(edgeType: "CustomRoleEdge")
+}
+
+type BillItem {
+  id: ID!
+  qty: String
+  item_id: String
+  #items: Bill! @belongsTo
+  #items: Item! @belongsTo
+  #item: Item! @belongsTo(relation: "item")
+}
+
+type Bill {
+  id: ID!
+  cashier: String!
+  total: String!
+  items: [Item!]! @belongsToMany #(type: "connection", edgeType: "CustomRoleEdge")
+  #bill_items: [BillItem!]! @hasMany
+}
+
+#type CustomRoleEdge implements Edge {
+  #cursor: String!
+  #node: Node
+  #qty: String
+#}
+
+input updItm{
+  name: String
+  batch: String
+  price: Float
+}
+
+type Mutation {
+  createItem(
+    name: String!
+    batch: String!
+    price: Float!
+  ): Item @create
+
+  updateItem(
+    id: ID!
+    data: updItm @spread
+  ): Item @update
+
+  deleteItem(
+    id: ID!
+  ): Item @delete
+
+}
+
+
