@@ -43,7 +43,6 @@ class gqlitemTest extends TestCase
             }
         ');
         // var_dump($response->content());
-        // var_dump( $this->jsonStringToArr($response->content()) );
         $response->assertStatus(200)
             ->assertHeader('Content-Type', 'application/json')
             ->assertJsonStructure([
@@ -55,7 +54,7 @@ class gqlitemTest extends TestCase
                     ]
                 ]
             ])
-            ->assertJsonFragment(['id' => "$this->existing_user_id"], $this->existing_user_id);
+            ->assertJsonFragment(['id' => "$this->existing_user_id"]);
     }
 
     public function testNonExistingUserTest()
@@ -79,7 +78,6 @@ class gqlitemTest extends TestCase
                 ]
             ])
         ;
-        // $response
         // var_dump($response);
     }
 
@@ -123,6 +121,7 @@ class gqlitemTest extends TestCase
                 }
             }
         ');
+        var_dump($response->content());
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
@@ -134,15 +133,11 @@ class gqlitemTest extends TestCase
                     ]
                 ]
             ])
-            ->assertJsonFragment(['name' => "$this->create_item_name"], $this->create_item_name)
-            ->assertJsonFragment(['batch' => "$this->create_item_batch"], $this->create_item_batch)
-            ->assertJsonFragment(['price' => "$this->create_item_price"], $this->create_item_price)
+            ->assertJsonFragment(['name' => "$this->create_item_name"])
+            ->assertJsonFragment(['batch' => "$this->create_item_batch"])
+            ->assertJsonFragment(['price' => "$this->create_item_price"])
         ;
-        // $response
-        // var_dump($response);
-        // $this->created_item_id = $this->jsonStringToArr($response->content())["data"]["createItem"]["id"];
         return $this->jsonStringToArr($response->content())["data"]["createItem"]["id"];
-        // var_dump($this->created_item_id);
     }
 
     /**
@@ -157,11 +152,11 @@ class gqlitemTest extends TestCase
         }
     }
      */
-    protected function testReadExistingItemTest()
+    protected function testReadExistingItemTest($id)
     {
         $response = $this->graphQL(/** @lang GraphQL */ '
             {
-                item(id: 31){
+                item(id: '.$id.'){
                     id
                     name
                     batch
@@ -169,8 +164,7 @@ class gqlitemTest extends TestCase
                 }
             }
         ');
-        // var_dump($response->content());
-        // var_dump( $this->jsonStringToArr($response->content()) );
+        var_dump($response->content());
         $response->assertStatus(200)
             ->assertHeader('Content-Type', 'application/json')
             ->assertJsonStructure([
@@ -183,7 +177,7 @@ class gqlitemTest extends TestCase
                     ]
                 ]
             ])
-            ->assertJsonFragment(['id' => "$this->existing_user_id"], $this->existing_user_id);
+            ->assertJsonFragment(['id' => "$id"]);
     }
 
     /**
@@ -205,18 +199,15 @@ class gqlitemTest extends TestCase
                 }
             }
         ');
+        var_dump($response->content());
         $response->assertStatus(200)
-            // ->assertJsonPath('data', 'invalid_credentials')
             ->assertJsonStructure([
                 'data' => [
-                    'item' => [
-                        null
-                    ]
+                    'item'
                 ]
             ])
+            ->assertJsonFragment(['item' => null])
         ;
-        // $response
-        // var_dump($response);
     }
 
     /**
@@ -233,8 +224,6 @@ class gqlitemTest extends TestCase
      */
     protected function testEditItemTest($id)
     {
-        var_dump("xz");
-        var_dump($this->created_item_id);
         $response = $this->graphQL(/** @lang GraphQL */ '
             mutation{
                 updateItem(
@@ -252,6 +241,7 @@ class gqlitemTest extends TestCase
                 }
             }
         ');
+        var_dump($response->content());
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
@@ -263,13 +253,11 @@ class gqlitemTest extends TestCase
                     ]
                 ]
             ])
-            ->assertJsonFragment(['id' => "$id"], $id)
-            ->assertJsonFragment(['name' => "$this->edit_item_name"], $this->edit_item_name)
-            ->assertJsonFragment(['batch' => "$this->edit_item_batch"], $this->edit_item_batch)
-            ->assertJsonFragment(['price' => "$this->edit_item_price"], $this->edit_item_price)
+            ->assertJsonFragment(['id' => "$id"])
+            ->assertJsonFragment(['name' => "$this->edit_item_name"])
+            ->assertJsonFragment(['batch' => "$this->edit_item_batch"])
+            ->assertJsonFragment(['price' => "$this->edit_item_price"])
         ;
-        // $response
-        var_dump($response);
     }
 
     /**
@@ -286,8 +274,6 @@ class gqlitemTest extends TestCase
      */
     protected function testDeleteItemTest($id)
     {
-        var_dump("xz");
-        var_dump($this->created_item_id);
         $response = $this->graphQL(/** @lang GraphQL */ '
             mutation{
                 deleteItem(
@@ -300,6 +286,7 @@ class gqlitemTest extends TestCase
                 }
             }
         ');
+        var_dump($response->content());
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
@@ -311,9 +298,11 @@ class gqlitemTest extends TestCase
                     ]
                 ]
             ])
+            ->assertJsonFragment(['id' => "$id"])
+            ->assertJsonFragment(['name' => "$this->edit_item_name"])
+            ->assertJsonFragment(['batch' => "$this->edit_item_batch"])
+            ->assertJsonFragment(['price' => "$this->edit_item_price"])
         ;
-        // $response
-        var_dump($response);
     }
 
 
