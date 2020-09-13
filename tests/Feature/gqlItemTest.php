@@ -1,6 +1,5 @@
 <?php
 
-// namespace Tests\Unit;
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -12,12 +11,6 @@ use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 class gqlitemTest extends TestCase
 {
     use MakesGraphQLRequests;
-    
-    protected $token = null;
-    protected $email = "k@admin.com";
-    protected $password = "k";
-    protected $existing_user_id = 8;
-    public $created_item_id = null;
 
     protected $create_item_name = "gql-create-unit-test";
     protected $create_item_batch = "unit-c-gql";
@@ -26,62 +19,10 @@ class gqlitemTest extends TestCase
     protected $edit_item_batch = "unit-e-gql";
     protected $edit_item_price = 200;
 
+
     /**
-     * A basic test example.
-     *
-     * @return void
+     * This 'root' function does CRUD test for item using graphQL endpoint
      */
-    public function testExistingUserTest()
-    {
-        $response = $this->graphQL(/** @lang GraphQL */ '
-            {
-                user(id:'.$this->existing_user_id.') {
-                    id
-                    name
-                    email
-                }
-            }
-        ');
-        // var_dump($response->content());
-        $response->assertStatus(200)
-            ->assertHeader('Content-Type', 'application/json')
-            ->assertJsonStructure([
-                'data' => [
-                    'user' => [
-                        'id',
-                        'email',
-                        'name',
-                    ]
-                ]
-            ])
-            ->assertJsonFragment(['id' => "$this->existing_user_id"]);
-    }
-
-    public function testNonExistingUserTest()
-    {
-        $response = $this->graphQL(/** @lang GraphQL */ '
-            {
-                user(id:857) {
-                    id
-                    name
-                    email
-                }
-            }
-        ');
-        $response->assertStatus(200)
-            // ->assertJsonPath('data', 'invalid_credentials')
-            ->assertJsonStructure([
-                'data' => [
-                    'user' => [
-                        
-                    ]
-                ]
-            ])
-        ;
-        // var_dump($response);
-    }
-
-
     public function testItemCrudTest()
     {
         $new_id = $this->testCreateItemTest();
@@ -303,26 +244,6 @@ class gqlitemTest extends TestCase
             ->assertJsonFragment(['batch' => "$this->edit_item_batch"])
             ->assertJsonFragment(['price' => "$this->edit_item_price"])
         ;
-    }
-
-
-    /**
-     * credit for getting user jwt in unit testing: https://github.com/tymondesigns/jwt-auth/issues/1246#issuecomment-633380379
-     */
-    public function getTokenForUser(User $user) : string
-    {
-        return \JWTAuth::fromUser($user);
-    }
-
-    public function adminUser() : User
-    {
-        $user = \App\User::query()->firstWhere('email', $this->email);
-        if ($user) {
-            return $user;
-        }
-        // $user = \App\User::generate('Test Admin', 'test-admin@example.com', self::AUTH_PASSWORD);
-        // $user->assignRole(Role::findByName('admin'));
-        // return $user;
     }
 
     protected function jsonStringToArr($string){
